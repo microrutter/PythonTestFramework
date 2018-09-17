@@ -62,6 +62,12 @@ class SeleniumDriver():
 
     # gets element dependent on type
     def getElement(self, locator, locatorType="id"):
+        '''
+        returns the element 
+        :param locator:
+        :param locatorType:
+        :return:
+        '''
         element = None
         try:
             locatorType = locatorType.lower()
@@ -217,6 +223,14 @@ class SeleniumDriver():
 
     def waitForElement(self, locator, locatorType="id",
                                timeout=10, pollFrequency=0.5):
+        '''
+        Waits for element to appear
+        :param locator:
+        :param locatorType:
+        :param timeout:
+        :param pollFrequency:
+        :return:
+        '''
         element = None
         try:
             byType = self.getByType(locatorType)
@@ -236,7 +250,7 @@ class SeleniumDriver():
 
     def webScroll(self, direction="up"):
         """
-        NEW METHOD
+        Scrolls page up or down
         """
         if direction == "up":
             # Scroll Up
@@ -245,3 +259,29 @@ class SeleniumDriver():
         if direction == "down":
             # Scroll Down
             self.driver.execute_script("window.scrollBy(0, 1000);")
+
+    def iframeSwitch(self, parent="yes", str="no", num=0):
+        """
+        Switch's between iframes
+        using either id, name or number of
+        iframe
+        :return:
+        """
+        if parent == "yes":
+            self.driver.switch_to.default_content()
+        elif str == "no":
+            self.driver.switch_to.frame(num)
+        else:
+            self.driver.switch_to.frame(str)
+
+    def alert(self, accept="yes"):
+        """
+        switch to alert and
+        either accept or dismiss
+        :return:
+        """
+        alert = self.driver.switch_to.alert
+        if accept == "yes":
+            alert.accept()
+        else:
+            alert.dismiss()
