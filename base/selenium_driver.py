@@ -63,7 +63,7 @@ class SeleniumDriver():
     # gets element dependent on type
     def getElement(self, locator, locatorType="id"):
         '''
-        returns the element 
+        returns the element
         :param locator:
         :param locatorType:
         :return:
