@@ -11,8 +11,7 @@ BeautifulSoup helpers uses beautifulsoup to navigate the DOM to help get text
 navigate tables and find buttons intended as an extension to selenium methods
 """
 """
-:Owner:
-:Company:
+:Author: Wayne
 """
 """
 1. **get_text_all** - Looks for a given element and returns the text of that element and all child elements
@@ -44,6 +43,12 @@ navigate tables and find buttons intended as an extension to selenium methods
 
 10. **find_clickable_element_sibling** - As above but this is given a beautifulsoup object to find the clickable elements in
 (jump to section in [[beautifulsouphelpers.py#find_clickable_element_sibling]])
+
+11. **find_clickable_element_partial_text** - Looks for a possible clickable element that match's a partial text and returns that elements attributes as list
+(jump to section in [[beautifulsouphelpers.py#find_clickable_element_partial_text]])
+
+12. **get_text** - Returns the text of a specific element
+(jump to section in [[beautifulsouphelpers.py#get_text]])
 """
 
 
@@ -62,6 +67,11 @@ class Helpers:
         for element in elements:
             result = result + element.get_text() + " "
         return result
+    
+    # ===get_text===
+    def get_text(self, tag: str = "", attributes: dict = {}) -> str:
+        element = self.bs.find(tag, attributes)
+        return element.get_text()
 
     # ===get_text_element_sibling===
     def get_text_element_sibling(
@@ -127,31 +137,44 @@ class Helpers:
         button = self.bs.find_all("button")
         input = self.bs.find_all("input")
         if len(button) > 0:
-            print("in button")
+            self.log.info("button length: " + str(len(button)))
             for but in button:
-                if re.sub(r"\s+", "", but.get_text()) == re.sub(r"\s+", "", text):
+                if self.util.verifyTextMatch(actualText=re.sub(r"\s+", "", but.get_text()), expectedText=re.sub(r"\s+", "", text)):
                     return ["button", but]
         if len(input) > 0:
-            print("in input")
+            self.log.info("input length: " + str(len(input)))
             for but in input:
-                print(but["value"])
-                if but["value"] == text:
-                    return ["input", but]
+                if but.has_attr('value'):
+                    if self.util.verifyTextMatch(actualText=but["value"], expectedText=text):
+                        return ["input", but]
         return None
 
     # ===find_clickable_element_sibling===
-    def find_clickable_element_sibling(self, text: str, parent: BeautifulSoup):
+    def find_clickable_element_sibling(self, text: str, parent: BeautifulSoup) -> list:
         button = parent.find_all("button")
         input = parent.find_all("input")
         if len(button) > 0:
-            print("in button")
             for but in button:
-                if re.sub(r"\s+", "", but.get_text()) == re.sub(r"\s+", "", text):
+                if self.util.verifyTextMatch(actualText=re.sub(r"\s+", "", but.get_text()), expectedText=re.sub(r"\s+", "", text)):
                     return ["button", but]
         if len(input) > 0:
-            print("in input")
             for but in input:
-                print(but["value"])
-                if but["value"] == text:
-                    return ["input", but]
+                if but.has_attr('value'):
+                    if self.util.verifyTextMatch(actualText=but["value"], expectedText=text):
+                        return ["input", but]
+        return None
+    
+    # ===find_clickable_element_partial_text===
+    def find_clickable_element_partial_text(self, partialtext: str = "") -> list:
+        button = self.bs.find_all("button")
+        input = self.bs.find_all("input")
+        if len(button) > 0:
+            for but in button:
+                if self.util.verifyTextContains(actualText=but.get_text(), expectedText=partialtext):
+                    return ["button", but]
+        if len(input) > 0:
+            for but in input:
+                if but.has_attr('value'):
+                    if self.util.verifyTextContains(actualText=but["value"], expectedText=partialtext):
+                        return ["input", but]
         return None

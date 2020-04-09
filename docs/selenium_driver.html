@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>selenium_driver.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>selenium_driver.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Selenium driver wrapper for the more common selenium ctions</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">print_stack</span>
+<span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.remote.webelement</span> <span class="kn">import</span> <span class="n">WebElement</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.by</span> <span class="kn">import</span> <span class="n">By</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support</span> <span class="kn">import</span> <span class="n">expected_conditions</span> <span class="k">as</span> <span class="n">EC</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">WebDriverWait</span><span class="p">,</span> <span class="n">Select</span>
+<span class="kn">from</span> <span class="nn">utilities.util</span> <span class="kn">import</span> <span class="n">Util</span>
+<span class="kn">import</span> <span class="nn">utilities.custom_logger</span> <span class="kn">as</span> <span class="nn">cl</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>:Owner:
+:Company:</p>
+<ol>
+<li>
+<p><strong>screen_shot</strong> - Takes a string as an argument and creates a screenshot with that name saves it in the screenshot folder in the working directory
+(jump to section in  <a href="selenium_driver.html#screen_shot">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>get_title</strong> - Gets the title of the page and returns it as string
+(jump to section in  <a href="selenium_driver.html#get_title">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>get_current_url</strong> - Gets the url of the page and returns it as string
+(jump to section in  <a href="selenium_driver.html#get_current_url">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>get_element</strong> - Looks for the given locator via the given by type and returns WebElement
+(jump to section in  <a href="selenium_driver.html#get_element">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>check_element_exists</strong> - Tries to look for the element via the given locator and By type returns true if found
+(jump to section in  <a href="selenium_driver.html#check_element_exists">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>element_click</strong> - Tries to click on a element via given locator and By type
+(jump to section in  <a href="selenium_driver.html#element_click">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>send_keys</strong> - Takes a string and sends that to an input element
+(jump to section in  <a href="selenium_driver.html#send_keys">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>clear_field</strong> - Clears an input area of any text
+(jump to section in  <a href="selenium_driver.html#clear_field">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>wait_for_element</strong> - Waits for an element to become clickable
+(jump to section in  <a href="selenium_driver.html#wait_for_element">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>web_scroll</strong> - Scrolls the page up or down by a set amount 
+(jump to section in  <a href="selenium_driver.html#web_scroll">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>iframe_switch</strong> - Switches between iframes depending on given arguments
+(jump to section in  <a href="selenium_driver.html#iframe_switch">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>alert</strong> - Accepts or declines a javascript alert popup
+(jump to section in  <a href="selenium_driver.html#alert">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>alert_text</strong> - Gets the text from a javascript popup alert and returns the text
+(jump to section in  <a href="selenium_driver.html#alert_text">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>select_option_text</strong> - Select an option in a select element via visible text
+(jump to section in  <a href="selenium_driver.html#select_option_text">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>get_options</strong> - Returns a list of all the options within a select element
+(jump to section in  <a href="selenium_driver.html#get_options">selenium_driver.py</a>)</p>
+</li>
+<li>
+<p><strong>get_selected_option</strong> - Returns the selected option as WebElement
+(jump to section in  <a href="selenium_driver.html#get_selected_option">selenium_driver.py</a>)</p>
+</li>
+</ol>
+<p><em>Internal Methods</em></p>
+<ol>
+<li><strong><strong>get_by_type</strong></strong> - Takes a string and converts that string to type of By and returns this type
+(jump to section in  <a href="selenium_driver.html#get_by_type">selenium_driver.py</a>)</li>
+</ol>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">SeleniumDriver</span><span class="p">:</span>
+
+    <span class="n">log</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">customLogger</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">driver</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">driver</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <h3><span id="screen_shot" href="screen_shot"> screen_shot </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">screen_shot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_message</span> <span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">result_message</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+        <span class="n">screenshot_directory</span> <span class="o">=</span> <span class="s2">&quot;../screenshots/&quot;</span>
+        <span class="n">relative_file_name</span> <span class="o">=</span> <span class="n">screenshot_directory</span> <span class="o">+</span> <span class="n">file_name</span>
+        <span class="n">current_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">destination_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_directory</span><span class="p">,</span> <span class="n">relative_file_name</span><span class="p">)</span>
+        <span class="n">destination_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_directory</span><span class="p">,</span> <span class="n">screenshot_directory</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">destination_directory</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">save_screenshot</span><span class="p">(</span><span class="n">destination_file</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Screenshot save to directory: &quot;</span> <span class="o">+</span> <span class="n">destination_file</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;### Exception Occurred when taking screenshot&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h3><span id="get_title" href="get_title"> get_title </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">title</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <h3><span id="get_current_url" href="get_current_url"> get_current_url </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_current_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">current_url</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <h3><span id="get_by_type" href="get_by_type"> get_by_type </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__get_by_type__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">By</span><span class="p">:</span>
+        <span class="n">locator_type</span> <span class="o">=</span> <span class="n">locator_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">locator_type</span> <span class="o">==</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">By</span><span class="o">.</span><span class="n">ID</span>
+        <span class="k">elif</span> <span class="n">locator_type</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">By</span><span class="o">.</span><span class="n">NAME</span>
+        <span class="k">elif</span> <span class="n">locator_type</span> <span class="o">==</span> <span class="s2">&quot;xpath&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">By</span><span class="o">.</span><span class="n">XPATH</span>
+        <span class="k">elif</span> <span class="n">locator_type</span> <span class="o">==</span> <span class="s2">&quot;css&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">By</span><span class="o">.</span><span class="n">CSS_SELECTOR</span>
+        <span class="k">elif</span> <span class="n">locator_type</span> <span class="o">==</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">By</span><span class="o">.</span><span class="n">CLASS_NAME</span>
+        <span class="k">elif</span> <span class="n">locator_type</span> <span class="o">==</span> <span class="s2">&quot;link&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">By</span><span class="o">.</span><span class="n">LINK_TEXT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Locator type &quot;</span> <span class="o">+</span> <span class="n">locator_type</span> <span class="o">+</span> <span class="s2">&quot; not correct/supported&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <h3><span id="get_element" href="get_element"> get_element </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+        <span class="n">element_return</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">locator_type</span> <span class="o">=</span> <span class="n">locator_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">by_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_by_type__</span><span class="p">(</span><span class="n">locator_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">element_return</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">by_type</span><span class="p">,</span> <span class="n">locator</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Element found with locator: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator</span>
+                    <span class="o">+</span> <span class="s2">&quot; and  locator_type: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator_type</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">element_return</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">by_type</span><span class="p">,</span> <span class="n">locator</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Element found with locator: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator</span>
+                    <span class="o">+</span> <span class="s2">&quot; and  locator_type: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator_type</span>
+                <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Element not found with locator: &quot;</span>
+                <span class="o">+</span> <span class="n">locator</span>
+                <span class="o">+</span> <span class="s2">&quot; and  locator_type: &quot;</span>
+                <span class="o">+</span> <span class="n">locator_type</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_shot</span><span class="p">(</span><span class="s2">&quot;Element_not_found_&quot;</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element_return</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <h3><span id="check_element_exists" href="check_element_exists"> check_element_exists </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">check_element_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">locator_type</span> <span class="o">=</span> <span class="n">locator_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">by_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_by_type__</span><span class="p">(</span><span class="n">locator_type</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">by_type</span><span class="p">,</span> <span class="n">locator</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Element found with locator: &quot;</span>
+                <span class="o">+</span> <span class="n">locator</span>
+                <span class="o">+</span> <span class="s2">&quot; and  locator_type: &quot;</span>
+                <span class="o">+</span> <span class="n">locator_type</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Element not found with locator: &quot;</span>
+                <span class="o">+</span> <span class="n">locator</span>
+                <span class="o">+</span> <span class="s2">&quot; and  locator_type: &quot;</span>
+                <span class="o">+</span> <span class="n">locator_type</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <h3><span id="element_click" href="element_click"> element_click </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">element_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">element_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="o">=</span><span class="n">locator_type</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">)</span>
+                <span class="n">element_sub</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clicked on sub element with locator: &quot;</span>
+                <span class="o">+</span> <span class="n">locator</span>
+                <span class="o">+</span> <span class="s2">&quot; locator type: &quot;</span>
+                <span class="o">+</span> <span class="n">locator_type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">element_main</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">)</span>
+                <span class="n">element_main</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Clicked on element with locator: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator</span>
+                    <span class="o">+</span> <span class="s2">&quot; locator type: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator_type</span>
+                <span class="p">)</span>
+            <span class="n">Util</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">Util</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="s2">&quot;Give page time to react&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot click on the element with locator: &quot;</span>
+                <span class="o">+</span> <span class="n">locator</span>
+                <span class="o">+</span> <span class="s2">&quot; locator_type: &quot;</span>
+                <span class="o">+</span> <span class="n">locator_type</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_shot</span><span class="p">(</span><span class="s2">&quot;Element_click_not_found_&quot;</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span>
+            <span class="n">print_stack</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <h3><span id="send_keys" href="send_keys"> send_keys </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">send_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">WebElement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">element_sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="o">=</span><span class="n">locator_type</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">)</span>
+                <span class="n">element_sub</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Sent data on sub element with locator: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator</span>
+                    <span class="o">+</span> <span class="s2">&quot; locator_type: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator_type</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">element_main</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="o">=</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="o">=</span><span class="n">locator_type</span><span class="p">)</span>
+                <span class="n">element_main</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;Sent data on main element with locator: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator</span>
+                    <span class="o">+</span> <span class="s2">&quot; locator_type: &quot;</span>
+                    <span class="o">+</span> <span class="n">locator_type</span>
+                <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot send data on the element with locator: &quot;</span>
+                <span class="o">+</span> <span class="n">locator</span>
+                <span class="o">+</span> <span class="s2">&quot; locator_type: &quot;</span>
+                <span class="o">+</span> <span class="n">locator_type</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_shot</span><span class="p">(</span><span class="s2">&quot;Element_send_keys_not_found_&quot;</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span>
+            <span class="n">print_stack</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <h3><span id="clear_field" href="clear_field"> clear_field </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">clear_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">)</span>
+        <span class="n">element</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Clear field with locator: &quot;</span> <span class="o">+</span> <span class="n">locator</span> <span class="o">+</span> <span class="s2">&quot; locator_type: &quot;</span> <span class="o">+</span> <span class="n">locator_type</span>
+        <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <h3><span id="wait_for_element" href="wait_for_element"> wait_for_element </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">wait_for_element</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">poll_frequency</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">by_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_by_type__</span><span class="p">(</span><span class="n">locator_type</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Waiting for maximum :: &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot; :: seconds for element to be clickable&quot;</span>
+            <span class="p">)</span>
+            <span class="n">wait</span> <span class="o">=</span> <span class="n">WebDriverWait</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+                <span class="n">poll_frequency</span><span class="o">=</span><span class="n">poll_frequency</span><span class="p">,</span>
+                <span class="n">ignored_exceptions</span><span class="o">=</span><span class="p">[</span>
+                    <span class="n">NoSuchElementException</span><span class="p">,</span>
+                    <span class="n">ElementNotVisibleException</span><span class="p">,</span>
+                    <span class="n">ElementNotSelectableException</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">wait</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="n">EC</span><span class="o">.</span><span class="n">element_to_be_clickable</span><span class="p">((</span><span class="n">by_type</span><span class="p">,</span> <span class="n">locator</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Element appeared on the web page&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Element not appeared on the web page&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_shot</span><span class="p">(</span><span class="s2">&quot;Element_not_found_&quot;</span> <span class="o">+</span> <span class="n">locator</span><span class="p">)</span>
+            <span class="n">print_stack</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <h3><span id="web_scroll" href="web_scroll"> web_scroll </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">web_scroll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;up&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;up&quot;</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Scroll Up</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;window.scrollBy(0, -1000);&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;down&quot;</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Scroll Down</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s2">&quot;window.scrollBy(0, 1000);&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h3><span id="iframe_switch" href="iframe_switch"> iframe_switch </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">iframe_switch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">default_content</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">string</span> <span class="o">==</span> <span class="s2">&quot;no&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <h3><span id="alert" href="alert"> alert </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">alert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accept</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">):</span>
+        <span class="n">alert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">alert</span>
+        <span class="k">if</span> <span class="n">accept</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
+            <span class="n">alert</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alert</span><span class="o">.</span><span class="n">dismiss</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <h3><span id="alert_text" href="alert_text"> alert_text </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">alert_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">Util</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">Util</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="s2">&quot;Give alert time to react&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">alert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">switch_to</span><span class="o">.</span><span class="n">alert</span>
+            <span class="k">return</span> <span class="n">alert</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <h3><span id="select_option_text" href="select_option_text"> select_option_text </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">select_option_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p>select by visible text</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>            <span class="n">select</span><span class="o">.</span><span class="n">select_by_visible_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Select option found and selected&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Select option not found&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <h3><span id="get_options" href="get_options"> get_options </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Select option found and selected&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">select</span><span class="o">.</span><span class="n">options</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Select option not found&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <h3><span id="get_selected_option" href="get_selected_option"> get_selected_option </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_selected_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebElement</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_element</span><span class="p">(</span><span class="n">locator</span><span class="p">,</span> <span class="n">locator_type</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Select found and option selected returned&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">select</span><span class="o">.</span><span class="n">first_selected_option</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Select option not found&quot;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

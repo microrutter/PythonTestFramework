@@ -36,8 +36,7 @@ navigate tables and find buttons intended as an extension to selenium methods</p
       <div class='octowrap'>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
-      <p>:Owner:
-:Company:</p>
+      <p>:Author: Wayne</p>
 <ol>
 <li>
 <p><strong>get_text_all</strong> - Looks for a given element and returns the text of that element and all child elements
@@ -78,6 +77,14 @@ navigate tables and find buttons intended as an extension to selenium methods</p
 <li>
 <p><strong>find_clickable_element_sibling</strong> - As above but this is given a beautifulsoup object to find the clickable elements in
 (jump to section in  <a href="beautifulsouphelpers.html#find_clickable_element_sibling">beautifulsouphelpers.py</a>)</p>
+</li>
+<li>
+<p><strong>find_clickable_element_partial_text</strong> - Looks for a possible clickable element that match&rsquo;s a partial text and returns that elements attributes as list
+(jump to section in  <a href="beautifulsouphelpers.html#find_clickable_element_partial_text">beautifulsouphelpers.py</a>)</p>
+</li>
+<li>
+<p><strong>get_text</strong> - Returns the text of a specific element
+(jump to section in  <a href="beautifulsouphelpers.html#get_text">beautifulsouphelpers.py</a>)</p>
 </li>
 </ol>
     </div>
@@ -136,6 +143,20 @@ navigate tables and find buttons intended as an extension to selenium methods</p
       <div class='octowrap'>
         <a class='octothorpe' href='#section-5'>#</a>
       </div>
+      <h3><span id="get_text" href="get_text">get_text</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bs</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
       <h3><span id="get_text_element_sibling" href="get_text_element_sibling">get_text_element_sibling</span></h3>
     </div>
     <div class='code'>
@@ -155,10 +176,10 @@ navigate tables and find buttons intended as an extension to selenium methods</p
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       <h3><span id="count_sibling" href="count_sibling">count_sibling</span></h3>
     </div>
@@ -181,10 +202,10 @@ navigate tables and find buttons intended as an extension to selenium methods</p
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-7'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
       <h3><span id="get_table_rows" href="get_table_rows"> get_table_rows </span></h3>
     </div>
@@ -196,10 +217,10 @@ navigate tables and find buttons intended as an extension to selenium methods</p
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-8'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
       <h3><span id="search_row_for_element" href="search_row_for_element"> search_row_for_element </span></h3>
     </div>
@@ -214,10 +235,10 @@ navigate tables and find buttons intended as an extension to selenium methods</p
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-9'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       <h3><span id="get_all_sibling_divs" href="get_all_sibling_divs"> get_all_sibling_divs </span></h3>
     </div>
@@ -229,10 +250,10 @@ navigate tables and find buttons intended as an extension to selenium methods</p
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
       <h3><span id="get_attribute_button" href="get_attribute_button">get_attribute_button</span></h3>
     </div>
@@ -244,10 +265,10 @@ navigate tables and find buttons intended as an extension to selenium methods</p
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
       <h3><span id="find_clickable_element" href="find_clickable_element">find_clickable_element</span></h3>
     </div>
@@ -256,42 +277,64 @@ navigate tables and find buttons intended as an extension to selenium methods</p
         <span class="n">button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bs</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">)</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bs</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">button</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;in button&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;button length: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">button</span><span class="p">)))</span>
             <span class="k">for</span> <span class="n">but</span> <span class="ow">in</span> <span class="n">button</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">but</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span> <span class="o">==</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextMatch</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">but</span><span class="o">.</span><span class="n">get_text</span><span class="p">()),</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)):</span>
                     <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;button&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;in input&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;input length: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)))</span>
             <span class="k">for</span> <span class="n">but</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">text</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">but</span><span class="o">.</span><span class="n">has_attr</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextMatch</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">text</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">None</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-12'>
+  <div class='section' id='section-13'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-12'>#</a>
+        <a class='octothorpe' href='#section-13'>#</a>
       </div>
       <h3><span id="find_clickable_element_sibling" href="find_clickable_element_sibling">find_clickable_element_sibling</span></h3>
     </div>
     <div class='code'>
-      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">find_clickable_element_sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">BeautifulSoup</span><span class="p">):</span>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">find_clickable_element_sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">BeautifulSoup</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="n">button</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">)</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">button</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;in button&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">but</span> <span class="ow">in</span> <span class="n">button</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">but</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span> <span class="o">==</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextMatch</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">but</span><span class="o">.</span><span class="n">get_text</span><span class="p">()),</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)):</span>
                     <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;button&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;in input&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">but</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">text</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">but</span><span class="o">.</span><span class="n">has_attr</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextMatch</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">text</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">None</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <h3><span id="find_clickable_element_partial_text" href="find_clickable_element_partial_text">find_clickable_element_partial_text</span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">find_clickable_element_partial_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partialtext</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bs</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;button&quot;</span><span class="p">)</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bs</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">button</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">but</span> <span class="ow">in</span> <span class="n">button</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextContains</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="n">but</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">partialtext</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;button&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">but</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">but</span><span class="o">.</span><span class="n">has_attr</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextContains</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="n">but</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">partialtext</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">but</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">None</span>
 
 </pre></div>

@@ -2,14 +2,78 @@ import logging
 import os
 import time
 from traceback import print_stack
-
 from selenium.common.exceptions import *
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait, Select
-
+from utilities.util import Util
 import utilities.custom_logger as cl
 
+"""
+Selenium driver wrapper for the more common selenium ctions
+"""
+"""
+:Owner:
+:Company:
+"""
+"""
+1. **screen_shot** - Takes a string as an argument and creates a screenshot with that name saves it in the screenshot folder in the working directory
+(jump to section in [[selenium_driver.py#screen_shot]])
+
+2. **get_title** - Gets the title of the page and returns it as string
+(jump to section in [[selenium_driver.py#get_title]])
+
+3. **get_current_url** - Gets the url of the page and returns it as string
+(jump to section in [[selenium_driver.py#get_current_url]])
+
+4. **get_element** - Looks for the given locator via the given by type and returns WebElement
+(jump to section in [[selenium_driver.py#get_element]])
+
+5. **check_element_exists** - Tries to look for the element via the given locator and By type returns true if found
+(jump to section in [[selenium_driver.py#check_element_exists]])
+
+6. **element_click** - Tries to click on a element via given locator and By type
+(jump to section in [[selenium_driver.py#element_click]])
+
+7. **send_keys** - Takes a string and sends that to an input element
+(jump to section in [[selenium_driver.py#send_keys]])
+
+8. **clear_field** - Clears an input area of any text
+(jump to section in [[selenium_driver.py#clear_field]])
+
+9. **wait_for_element** - Waits for an element to become clickable
+(jump to section in [[selenium_driver.py#wait_for_element]])
+
+10. **web_scroll** - Scrolls the page up or down by a set amount 
+(jump to section in [[selenium_driver.py#web_scroll]])
+
+11. **iframe_switch** - Switches between iframes depending on given arguments
+(jump to section in [[selenium_driver.py#iframe_switch]])
+
+12. **alert** - Accepts or declines a javascript alert popup
+(jump to section in [[selenium_driver.py#alert]])
+
+13. **alert_text** - Gets the text from a javascript popup alert and returns the text
+(jump to section in [[selenium_driver.py#alert_text]])
+
+14. **select_option_text** - Select an option in a select element via visible text
+(jump to section in [[selenium_driver.py#select_option_text]])
+
+15. **get_options** - Returns a list of all the options within a select element
+(jump to section in [[selenium_driver.py#get_options]])
+
+16. **get_selected_option** - Returns the selected option as WebElement
+(jump to section in [[selenium_driver.py#get_selected_option]])
+
+"""
+"""
+*Internal Methods*
+
+1. **__get_by_type__** - Takes a string and converts that string to type of By and returns this type
+(jump to section in [[selenium_driver.py#get_by_type]])
+
+"""
 
 class SeleniumDriver:
 
@@ -18,11 +82,8 @@ class SeleniumDriver:
     def __init__(self, driver):
         self.driver = driver
 
-    # Takes screen shot of current page
-    def screen_shot(self, result_message):
-        """
-        Takes screenshot of the current open web page
-        """
+    # === screen_shot ===
+    def screen_shot(self, result_message :str):
         file_name = result_message + "." + str(round(time.time() * 1000)) + ".png"
         screenshot_directory = "../screenshots/"
         relative_file_name = screenshot_directory + file_name
@@ -36,18 +97,17 @@ class SeleniumDriver:
             self.log.info("Screenshot save to directory: " + destination_file)
         except:
             self.log.error("### Exception Occurred when taking screenshot")
-            print_stack()
 
-    # gets the title of the page
-    def get_title(self):
+    # === get_title ===
+    def get_title(self) -> str:
         return self.driver.title
 
-    # gets the current url of the page
-    def get_current_url(self):
+    # === get_current_url ===
+    def get_current_url(self) -> str:
         return self.driver.current_url
 
-    # Returns By type
-    def get_by_type(self, locator_type):
+    # === get_by_type === 
+    def __get_by_type__(self, locator_type: str) -> By:
         locator_type = locator_type.lower()
         if locator_type == "id":
             return By.ID
@@ -65,46 +125,43 @@ class SeleniumDriver:
             self.log.info("Locator type " + locator_type + " not correct/supported")
         return False
 
-    # gets element dependent on type
-    def get_element(self, locator, locator_type="id"):
-        """
-        returns the element
-        :param locator:
-        :param locator_type:
-        :return:
-        """
-        element = None
+    # === get_element ===
+    def get_element(self, locator: str, locator_type: str="id", element: WebElement = None) -> WebElement:
+        element_return = None
         try:
             locator_type = locator_type.lower()
-            by_type = self.get_by_type(locator_type)
-            element = self.driver.find_element(by_type, locator)
-            self.log.info(
-                "Element found with locator: "
-                + locator
-                + " and  locator_type: "
-                + locator_type
-            )
+            by_type = self.__get_by_type__(locator_type)
+            if element is not None:
+                element_return = element.find_element(by_type, locator)
+                self.log.info(
+                    "Element found with locator: "
+                    + locator
+                    + " and  locator_type: "
+                    + locator_type
+                )
+            else:
+                element_return = self.driver.find_element(by_type, locator)
+                self.log.info(
+                    "Element found with locator: "
+                    + locator
+                    + " and  locator_type: "
+                    + locator_type
+                )
         except:
-            self.log.info(
+            self.log.error(
                 "Element not found with locator: "
                 + locator
                 + " and  locator_type: "
                 + locator_type
             )
             self.screen_shot("Element_not_found_" + locator)
-        return element
+        return element_return
 
-    # gets element dependent on type
-    def check_element_exists(self, locator, locator_type="id"):
-        """
-        returns True if element exists
-        :param locator:
-        :param locator_type:
-        :return:
-        """
+    # === check_element_exists ===
+    def check_element_exists(self, locator: str, locator_type: str="id") -> bool:
         try:
             locator_type = locator_type.lower()
-            by_type = self.get_by_type(locator_type)
+            by_type = self.__get_by_type__(locator_type)
             self.driver.find_element(by_type, locator)
             self.log.info(
                 "Element found with locator: "
@@ -114,7 +171,7 @@ class SeleniumDriver:
             )
             return True
         except:
-            self.log.info(
+            self.log.error(
                 "Element not found with locator: "
                 + locator
                 + " and  locator_type: "
@@ -122,146 +179,28 @@ class SeleniumDriver:
             )
             return False
 
-    # gets element dependent on type
-    def check_web_element_exists(self, element_w, locator, locator_type="id"):
-        """
-        returns True if element exists
-        :param element_w:
-        :param locator:
-        :param locator_type:
-        :return:
-        """
+    # === element_click ===
+    def element_click(self, locator: str, locator_type: str="id", element: WebElement=None):
         try:
-            locator_type = locator_type.lower()
-            by_type = self.get_by_type(locator_type)
-            element_w.find_element(by_type, locator)
-            self.log.info(
-                "Element found with locator: "
-                + locator
-                + " and  locator_type: "
-                + locator_type
-            )
-            return True
-        except:
-            self.log.info(
-                "Element not found with locator: "
-                + locator
-                + " and  locator_type: "
-                + locator_type
-            )
-            return False
-
-    # gets element dependent on type
-    def get_web_element(self, element_w, locator, locator_type="id"):
-        """
-        returns the element
-        :param element_w:
-        :param locator:
-        :param locator_type:
-        :return:
-        """
-        try:
-            locator_type = locator_type.lower()
-            by_type = self.get_by_type(locator_type)
-            element = element_w.find_element(by_type, locator)
-            self.log.info(
-                "Element found with locator: "
-                + locator
-                + " and  locator_type: "
-                + locator_type
-            )
-            return element
-        except:
-            self.log.info(
-                "Element not found with locator: "
-                + locator
-                + " and  locator_type: "
-                + locator_type
-            )
-            self.screen_shot("Element_not_found_" + locator)
-            return None
-
-    # gets element list
-    def get_element_list(self, locator, locator_type="id"):
-        """
-        NEW METHOD
-        Get list of elements
-        """
-        element = None
-        try:
-            locator_type = locator_type.lower()
-            by_type = self.get_by_type(locator_type)
-            element = self.driver.find_elements(by_type, locator)
-            self.log.info(
-                "Element list found with locator: "
-                + locator
-                + " and locator_type: "
-                + locator_type
-            )
-        except:
-            self.log.info(
-                "Element list not found with locator: "
-                + locator
-                + " and locator_type: "
-                + locator_type
-            )
-            self.screen_shot("Element_list_not_found_" + locator)
-        return element
-
-    # gets element list
-    def get_web_element_list(self, element_w, locator="", locator_type="id"):
-        """
-        Get webelement list
-        :param element_w:
-        :param locator:
-        :param locator_type:
-        :return:
-        """
-        self.log.info("Checking list: " + element_w.get_attribute("class"))
-        element = None
-        try:
-            locator_type = locator_type.lower()
-            by_type = self.get_by_type(locator_type)
-            element = element_w.find_elements(by_type, locator)
-            self.log.info(
-                "Element list found with locator: "
-                + locator
-                + " and locator type: "
-                + locator_type
-            )
-            return element
-        except:
-            self.log.info(
-                "Element list not found with locator: "
-                + locator
-                + " and locator type: "
-                + locator_type
-                + " and element "
-                + element_w
-            )
-            self.log.info(print_stack())
-            self.screen_shot("Element list not found" + locator)
-            return None
-
-    # clicks on specified element
-    def element_click(self, locator="", locator_type="id", element=None):
-        """
-        Click on an element -> MODIFIED
-        Either provide element or a combination of locator and locator type
-        """
-        try:
-            if locator:  # This means if locator is not empty
-                element = self.get_element(locator, locator_type)
-            element.click()
-            self.log.info(
-                "Clicked on element with locator: "
+            if element is not None:
+                element_sub = self.get_element(locator=locator, locator_type=locator_type, element=element)
+                element_sub.click()
+                self.log.info("Clicked on sub element with locator: "
                 + locator
                 + " locator type: "
-                + locator_type
-            )
-            time.sleep(1)
+                + locator_type)
+            else:
+                element_main = self.get_element(locator, locator_type)
+                element_main.click()
+                self.log.info(
+                    "Clicked on element with locator: "
+                    + locator
+                    + " locator type: "
+                    + locator_type
+                )
+            Util.sleep(Util, sec=1, info="Give page time to react")
         except:
-            self.log.info(
+            self.log.error(
                 "Cannot click on the element with locator: "
                 + locator
                 + " locator_type: "
@@ -270,53 +209,29 @@ class SeleniumDriver:
             self.screen_shot("Element_click_not_found_" + locator)
             print_stack()
 
-    # clicks on specified element
-    def element_web_click(self, element_w, locator="", locator_type="id", element=None):
-        """
-        Click on an element -> MODIFIED
-        Either provide element or a combination of locator and locator_type
-        """
+    # === send_keys ===
+    def send_keys(self, data: str, locator: str, locator_type: str="id", element: WebElement=None):
         try:
-            if locator:  # This means if locator is not empty
-                self.wait_for_element_ele(element_w, locator, locator_type)
-                element = self.get_web_element(element_w, locator, locator_type)
-            element.click()
-            self.log.info(
-                "Clicked on element with locator: "
-                + locator
-                + " locator_type: "
-                + locator_type
-            )
-        except:
-            try:
-                element_w.click()
-            except:
+            if element is not None:
+                element_sub = self.get_element(locator=locator, locator_type=locator_type, element=element)
+                element_sub.send_keys(data)
                 self.log.info(
-                    "Cannot click on the element with locator: "
+                    "Sent data on sub element with locator: "
                     + locator
                     + " locator_type: "
                     + locator_type
                 )
-                self.log.info(print_stack())
-                self.screen_shot("Element_click_not_found_" + locator)
-
-    def send_keys(self, data, locator="", locator_type="id", element=None):
-        """
-        Send keys to an element -> MODIFIED
-        Either provide element or a combination of locator and locator_type
-        """
-        try:
-            if locator:  # This means if locator is not empty
-                element = self.get_element(locator, locator_type)
-            element.send_keys(data)
-            self.log.info(
-                "Sent data on element with locator: "
-                + locator
-                + " locator_type: "
-                + locator_type
-            )
+            else:
+                element_main = self.get_element(locator=locator, locator_type=locator_type)
+                element_main.send_keys(data)
+                self.log.info(
+                    "Sent data on main element with locator: "
+                    + locator
+                    + " locator_type: "
+                    + locator_type
+                )
         except:
-            self.log.info(
+            self.log.error(
                 "Cannot send data on the element with locator: "
                 + locator
                 + " locator_type: "
@@ -325,154 +240,21 @@ class SeleniumDriver:
             self.screen_shot("Element_send_keys_not_found_" + locator)
             print_stack()
 
-    def clear_field(self, locator="", locator_type="id"):
-        """
-        Clear an element field
-        """
+    # === clear_field ===
+    def clear_field(self, locator: str, locator_type: str="id"):
         element = self.get_element(locator, locator_type)
         element.clear()
         self.log.info(
             "Clear field with locator: " + locator + " locator_type: " + locator_type
         )
 
-    def get_text(self, locator="", locator_type="id", element=None, info=""):
-        """
-        NEW METHOD
-        Get 'Text' on an element
-        Either provide element or a combination of locator and locator_type
-        """
-        try:
-            if locator:  # This means if locator is not empty
-                element = self.get_element(locator, locator_type)
-            text = element.text
-            if len(text) == 0:
-                text = element.get_attribute("innerText")
-            if len(text) != 0:
-                self.log.info("Getting text on element :: " + info)
-                self.log.info("The text is :: '" + text + "'")
-                text = text.strip()
-        except:
-            self.log.error("Failed to get text on element " + info)
-            print_stack()
-            self.screen_shot("Element_text_not_found_" + locator)
-            text = None
-        return text
-
-    def get_web_element_text(
-        self, webele, locator="", locator_type="id", element=None, info=""
-    ):
-        """
-        NEW METHOD
-        Get 'Text' on an element
-        Either provide element or a combination of locator and locator_type
-        """
-        try:
-            if locator:  # This means if locator is not empty
-                element = self.get_web_element(webele, locator, locator_type)
-            text = element.text
-            self.log.info("The text is :: '" + text + "'")
-            if len(text) == 0:
-                text = element.get_attribute("innerText")
-                self.log.info("The text is :: '" + text + "'")
-            if len(text) != 0:
-                self.log.info("Getting text on element :: " + info)
-                self.log.info("The text is :: '" + text + "'")
-                text = text.strip()
-        except:
-            self.log.error("Failed to get text on element " + info)
-            print_stack()
-            self.screen_shot("Element_text_not_found_" + locator)
-            text = None
-        return text
-
-    def is_element_present(self, locator="", locator_type="id", element=None):
-        """
-        Check if element is present -> MODIFIED
-        Either provide element or a combination of locator and locator_type
-        """
-        try:
-            if locator:  # This means if locator is not empty
-                element = self.get_element(locator, locator_type)
-            if element is not None:
-                self.log.info(
-                    "Element present with locator: "
-                    + locator
-                    + " locator_type: "
-                    + locator_type
-                )
-                return True
-            else:
-                self.log.info(
-                    "Element not present with locator: "
-                    + locator
-                    + " locator_type: "
-                    + locator_type
-                )
-                return False
-        except:
-            print("Element not found")
-            return False
-
-    def is_element_displayed(self, locator="", locator_type="id", element=None):
-        """
-        NEW METHOD
-        Check if element is displayed
-        Either provide element or a combination of locator and locator_type
-        """
-        is_displayed = False
-        try:
-            if locator:  # This means if locator is not empty
-                element = self.get_element(locator, locator_type)
-            if element is not None:
-                is_displayed = element.is_displayed()
-                self.log.info("Element is displayed")
-            else:
-                self.log.info("Element not displayed")
-            return is_displayed
-        except:
-            print("Element not found")
-            return False
-
-    def element_presence_check(self, locator, by_type="id"):
-        """
-        Check if element is present
-        """
-        try:
-            element_list = self.driver.find_elements(by_type, locator)
-            if len(element_list) > 0:
-                self.log.info(
-                    "Element present with locator: "
-                    + locator
-                    + " locator_type: "
-                    + str(by_type)
-                )
-                return True
-            else:
-                self.log.info(
-                    "Element not present with locator: "
-                    + locator
-                    + " locator_type: "
-                    + str(by_type)
-                )
-                return False
-        except:
-            self.log.info("Element not found")
-            return False
-
+    # === wait_for_element ===
     def wait_for_element(
-        self, locator, locator_type="id", timeout=10, poll_frequency=0.5
-    ):
-        """
-        Waits for element to appear
-        :param locator:
-        :param locator_type:
-        :param timeout:
-        :param poll_frequency:
-        :return:
-        """
+        self, locator: str, locator_type: str="id", timeout: int=10, poll_frequency: float=0.5
+    ) -> bool:
         element = None
         try:
-            by_type = self.get_by_type(locator_type)
+            by_type = self.__get_by_type__(locator_type)
             self.log.info(
                 "Waiting for maximum :: "
                 + str(timeout)
@@ -492,52 +274,13 @@ class SeleniumDriver:
             self.log.info("Element appeared on the web page")
             return True
         except:
-            self.log.info("Element not appeared on the web page")
+            self.log.error("Element not appeared on the web page")
             self.screen_shot("Element_not_found_" + locator)
             print_stack()
             return False
-
-    def wait_for_element_ele(
-        self, ele, locator, locator_type="id", timeout=10, poll_frequency=0.5
-    ):
-        """
-        Waits for element to appear
-        :param locator:
-        :param locator_type:
-        :param timeout:
-        :param poll_frequency:
-        :return:
-        """
-        element = None
-        try:
-            by_type = self.get_by_type(locator_type)
-            self.log.info(
-                "Waiting for maximum :: "
-                + str(timeout)
-                + " :: seconds for element to be clickable"
-            )
-            wait = WebDriverWait(
-                ele,
-                timeout=timeout,
-                poll_frequency=poll_frequency,
-                ignored_exceptions=[
-                    NoSuchElementException,
-                    ElementNotVisibleException,
-                    ElementNotSelectableException,
-                ],
-            )
-            element = wait.until(EC.element_to_be_clickable((by_type, locator)))
-            self.log.info("Element appeared on the web page")
-        except:
-            self.log.info("Element not appeared on the web page")
-            self.screen_shot("Element_not_found_" + locator)
-            print_stack()
-        return element
-
-    def web_scroll(self, direction="up"):
-        """
-        Scrolls page up or down
-        """
+    
+    # === web_scroll ===
+    def web_scroll(self, direction: str="up"):
         if direction == "up":
             # Scroll Up
             self.driver.execute_script("window.scrollBy(0, -1000);")
@@ -546,72 +289,55 @@ class SeleniumDriver:
             # Scroll Down
             self.driver.execute_script("window.scrollBy(0, 1000);")
 
-    def iframe_switch(self, parent="yes", str="no", num=0):
-        """
-        Switch's between iframes
-        using either id, name or number of
-        iframe
-        :return:
-        """
+    # === iframe_switch ===
+    def iframe_switch(self, parent: str="yes", string: str="no", num: int=0):
         if parent == "yes":
             self.driver.switch_to.default_content()
-        elif str == "no":
+        elif string == "no":
             self.driver.switch_to.frame(num)
         else:
-            self.driver.switch_to.frame(str)
+            self.driver.switch_to.frame(string)
 
-    def alert(self, accept="yes"):
-        """
-        switch to alert and
-        either accept or dismiss
-        :return:
-        """
+    # === alert ===
+    def alert(self, accept: str="yes"):
         alert = self.driver.switch_to.alert
         if accept == "yes":
             alert.accept()
         else:
             alert.dismiss()
-
-    def select_option_text(self, text, locator, locator_type="id"):
-        """
-        Selects option by text
-        :param locator:
-        :param locator_type:
-        :param text:
-        """
+    
+    # === alert_text ===
+    def alert_text(self) -> str:
+        Util.sleep(Util, sec=2, info="Give alert time to react")
+        try:
+            alert = self.driver.switch_to.alert
+            return alert.text
+        except Exception as e:
+            self.log.info(e)
+            
+    # === select_option_text ===
+    def select_option_text(self, text: str, locator: str, locator_type: str="id"):
         try:
             select = Select(self.get_element(locator, locator_type))
             # select by visible text
             select.select_by_visible_text(text)
             self.log.info("Select option found and selected")
         except:
-            self.log.info("Select option not found")
+            self.log.error("Select option not found")
 
-    def get_options(self, locator, locator_type="id"):
-        """
-        Gets Options
-        :param locator:
-        :param locator_type:
-        :param text:
-        """
+    # === get_options ===
+    def get_options(self, locator: str, locator_type: str="id") -> list:
         try:
             select = Select(self.get_element(locator, locator_type))
-            # select by visible text
             self.log.info("Select option found and selected")
             return select.options
         except:
-            self.log.info("Select option not found")
-
-    def get_selected_option(self, locator, locator_type="id"):
-        """
-        Gets Selected Options
-        :param locator:
-        :param locator_type:
-        :param text:
-        """
+            self.log.error("Select option not found")
+   
+    # === get_selected_option ===
+    def get_selected_option(self, locator: str, locator_type: str="id") -> WebElement:
         try:
             select = Select(self.get_element(locator, locator_type))
-            # select by visible text
             self.log.info("Select found and option selected returned")
             return select.first_selected_option
         except:

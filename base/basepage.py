@@ -11,7 +11,7 @@ import utilities.custom_logger as cl
    Base page is where all pages inherit from and all common methods should be implemented here
 """
 """
-:Author: Wayne Rutter
+:Author: Wayne
 """
 """
 **Base Page Functions:**
@@ -39,19 +39,29 @@ import utilities.custom_logger as cl
 
 8. **concate_string** - Takes a list of strings and creates a single string from them and returns that string
 (jump to section in [[basepage.py#concate_string]])
+
+9. **getRowReturnList** - Function to get all rows in a table
+(jump to section in [[basepage.py#tableRow]])
+
+10. **click_on_button_partial_text** - Clicks on a button with a partial text find
+(jump to section in [[basepage.py#click_on_button_partial_text]])
+
+11. **compare_alert_text** - Takes a strign and compares it with the text in a javascript alert popup
+(jump to section in [[basepage.py#compare_alert_text]])
 """
+
 
 class BasePage(SeleniumDriver):
 
     log = cl.customLogger(logging.DEBUG)
 
     def __init__(self, driver):
-        
+
         super(BasePage, self).__init__(driver)
         self.driver = driver
         self.util = Util()
         self.bh = bh
-    
+
     # === verify_title ===
     def verify_page_title(self, title_to_verify: str) -> bool:
         try:
@@ -61,7 +71,7 @@ class BasePage(SeleniumDriver):
             self.log.error("Failed to get page title")
             print_stack()
             return False
-    
+
     # === css_builder ===
     def css_builder(self, element: BeautifulSoup) -> str:
         css_build = ""
@@ -69,17 +79,17 @@ class BasePage(SeleniumDriver):
             value = element[at]
             css_build = css_build + "[" + at + "="
             if isinstance(value, str):
-                css_build = css_build + "\"" + value
+                css_build = css_build + '"' + value
             else:
                 l = len(value)
                 i = 1
                 for v in value:
                     if i == 1:
-                        css_build = css_build + "\"" + v + ""
+                        css_build = css_build + '"' + v + ""
                     else:
-                        css_build = css_build + "\"" + v + ""
+                        css_build = css_build + '"' + v + ""
                     i = i + 1
-            css_build = css_build + "\"]"
+            css_build = css_build + '"]'
         return css_build
 
     # === click_on_button ===
@@ -93,8 +103,8 @@ class BasePage(SeleniumDriver):
             self.element_click(button[0] + css, "css")
         else:
             self.screen_shot(result_message="button_not_found")
-    
-    # === click_on_button_given_parent ===       
+
+    # === click_on_button_given_parent ===
     def click_on_button_given_parent(self, label: str, parent: BeautifulSoup):
         self.util.sleep(2)
         bs = self.bh(self.driver.page_source)
@@ -105,6 +115,18 @@ class BasePage(SeleniumDriver):
             self.element_click(button[0] + css, "css")
         else:
             self.screen_shot(result_message="button_not_found")
+    
+    # === click_on_button_partial_text ===
+    def click_on_button_partial_text(self, label: str):
+        self.util.sleep(2)
+        bs = self.bh(self.driver.page_source)
+        button = bs.find_clickable_element_partial_text(partialtext=label)
+        if len(button) > 0:
+            css = self.css_builder(button[1])
+            self.log.info(button[0] + css)
+            self.element_click(button[0] + css, "css")
+        else:
+            self.screen_shot(result_message="button_not_found")   
 
     # === click_on_delete_button_with_alert ===
     def click_on_delete_button_with_alert(self):
@@ -128,14 +150,24 @@ class BasePage(SeleniumDriver):
             if new_height == last_height:
                 break
             last_height = new_height
-    
+
     # === click_on_link ===
     def click_on_link(self, displayText: str):
         self.driver.find_element_by_link_text(displayText).click()
-    
+
     # === concate_string ===
     def concate_string(self, createString: list) -> str:
         returnString: str = ""
         for string in createString:
             returnString = returnString + string + " "
         return returnString.rstrip()
+    
+    # === tableRow ===
+    def getRowReturnList(self) -> list:
+        self.wait_for_element("tbody", "css", timeout=30)
+        bs = self.bh(self.driver.page_source)
+        return bs.get_table_rows()
+    
+    # === compare_alert_text ===
+    def compare_alert_text(self, text: str) -> bool:
+        return self.util.verifyTextMatch(actualText=self.alert_text(), expectedText=text)

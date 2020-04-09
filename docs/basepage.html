@@ -36,7 +36,7 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-1'>#</a>
       </div>
-      <p>:Author: Wayne Rutter</p>
+      <p>:Author: Wayne</p>
 <p><strong>Base Page Functions:</strong></p>
 <ol>
 <li>
@@ -71,6 +71,18 @@
 <p><strong>concate_string</strong> - Takes a list of strings and creates a single string from them and returns that string
 (jump to section in  <a href="basepage.html#concate_string">basepage.py</a>)</p>
 </li>
+<li>
+<p><strong>getRowReturnList</strong> - Function to get all rows in a table
+(jump to section in  <a href="basepage.html#tableRow">basepage.py</a>)</p>
+</li>
+<li>
+<p><strong>click_on_button_partial_text</strong> - Clicks on a button with a partial text find
+(jump to section in  <a href="basepage.html#click_on_button_partial_text">basepage.py</a>)</p>
+</li>
+<li>
+<p><strong>compare_alert_text</strong> - Takes a strign and compares it with the text in a javascript alert popup
+(jump to section in  <a href="basepage.html#compare_alert_text">basepage.py</a>)</p>
+</li>
 </ol>
     </div>
     <div class='code'>
@@ -101,7 +113,7 @@
     </div>
     <div class='code'>
       <div class="highlight"><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">driver</span><span class="p">):</span>
-        
+
         <span class="nb">super</span><span class="p">(</span><span class="n">BasePage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">driver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">util</span> <span class="o">=</span> <span class="n">Util</span><span class="p">()</span>
@@ -142,17 +154,17 @@
             <span class="n">value</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="n">at</span><span class="p">]</span>
             <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="n">at</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">value</span>
+                <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">value</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
                 <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+                        <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+                        <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span>
+            <span class="n">css_build</span> <span class="o">=</span> <span class="n">css_build</span> <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span>
         <span class="k">return</span> <span class="n">css_build</span></pre></div>
     </div>
   </div>
@@ -204,6 +216,27 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-8'>#</a>
       </div>
+      <h3><span id="click_on_button_partial_text" href="click_on_button_partial_text"> click_on_button_partial_text </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">click_on_button_partial_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">page_source</span><span class="p">)</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">bs</span><span class="o">.</span><span class="n">find_clickable_element_partial_text</span><span class="p">(</span><span class="n">partialtext</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">button</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">css</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">css_builder</span><span class="p">(</span><span class="n">button</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">button</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">css</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_click</span><span class="p">(</span><span class="n">button</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">css</span><span class="p">,</span> <span class="s2">&quot;css&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_shot</span><span class="p">(</span><span class="n">result_message</span><span class="o">=</span><span class="s2">&quot;button_not_found&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
       <h3><span id="click_on_delete_button_with_alert" href="click_on_delete_button_with_alert"> click_on_delete_button_with_alert </span></h3>
     </div>
     <div class='code'>
@@ -215,10 +248,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-9'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
       <h3><span id="scroll_to_bottom" href="scroll_to_bottom"> scroll_to_bottom </span></h3>
     </div>
@@ -229,10 +262,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
       <p>Scroll down to bottom</p>
     </div>
@@ -243,10 +276,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-11'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-11'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
       <p>Wait to load page</p>
     </div>
@@ -255,10 +288,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-12'>
+  <div class='section' id='section-13'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-12'>#</a>
+        <a class='octothorpe' href='#section-13'>#</a>
       </div>
       <p>Calculate new scroll height and compare with last scroll height</p>
     </div>
@@ -270,10 +303,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-13'>
+  <div class='section' id='section-14'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-13'>#</a>
+        <a class='octothorpe' href='#section-14'>#</a>
       </div>
       <h3><span id="click_on_link" href="click_on_link"> click_on_link </span></h3>
     </div>
@@ -283,10 +316,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-14'>
+  <div class='section' id='section-15'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-14'>#</a>
+        <a class='octothorpe' href='#section-15'>#</a>
       </div>
       <h3><span id="concate_string" href="concate_string"> concate_string </span></h3>
     </div>
@@ -295,7 +328,35 @@
         <span class="n">returnString</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">createString</span><span class="p">:</span>
             <span class="n">returnString</span> <span class="o">=</span> <span class="n">returnString</span> <span class="o">+</span> <span class="n">string</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
-        <span class="k">return</span> <span class="n">returnString</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">returnString</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <h3><span id="tablerow" href="tablerow"> tableRow </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">getRowReturnList</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_element</span><span class="p">(</span><span class="s2">&quot;tbody&quot;</span><span class="p">,</span> <span class="s2">&quot;css&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">page_source</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bs</span><span class="o">.</span><span class="n">get_table_rows</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h3><span id="compare_alert_text" href="compare_alert_text"> compare_alert_text </span></h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">compare_alert_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">verifyTextMatch</span><span class="p">(</span><span class="n">actualText</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alert_text</span><span class="p">(),</span> <span class="n">expectedText</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
 
 </pre></div>
     </div>
