@@ -24,3 +24,7 @@ Currently creating documentation for this test suite using pycco. These are foun
 --url = what url would you like to hit
 
 --ip = for selenium grid ignore if running locally
+
+## pipenv ##
+
+Have moved this project from requirements.txt to pipenv 
