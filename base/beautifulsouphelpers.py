@@ -49,6 +49,9 @@ navigate tables and find buttons intended as an extension to selenium methods
 
 12. **get_text** - Returns the text of a specific element
 (jump to section in [[beautifulsouphelpers.py#get_text]])
+
+13. **get_anchor_elements** - Returns the text and href of all anchor elements within a given page
+(jump to section in [[beautifulsouphelpers.py#get_all_anchors]])
 """
 
 
@@ -59,6 +62,13 @@ class Helpers:
     def __init__(self, section):
         self.bs = BeautifulSoup(section, "html5lib")
         self.util = Util()
+    
+    # ===get_all_anchors===
+    def get_anchor_elements(self) -> list:
+        urls: list = []
+        for a in self.bs.find_all('a'):
+            urls.append(dict(text=a.get_text(), link=a['href']))
+        return urls
 
     # ===get_text_all===
     def get_text_all(self, tag: str = "", attributes: dict = {}) -> str:
